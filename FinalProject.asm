@@ -57,13 +57,13 @@ getArray:
 	printString(intPromptCont) # prints ": "
 	getInt # gets the current array element
 	sb $t0, 0($s0) # stores the input in the array
-	addi $s0, $s0, 4 # increments the base address for the next element
+	addi $s0, $s0, 1 # increments the base address for the next element
 	addi $t1, $t1, 1 # increments the loop counter
 	beq $t1, $t3, resetArrayAddress1 # moves to the next step in the code
 	j getArray # restarts the loop
 
 resetArrayAddress1: # resets the array address back to the first element
-	addi $s0, $s0, -4 # decrements the base address to the previous element
+	addi $s0, $s0, -1 # decrements the base address to the previous element
 	addi $t1, $t1, -1 # decrements the loop counter
 	beq $t1, 1, echo # moves to the next step
 	j resetArrayAddress1 # restarts the loop until the array address is back down to the first element
@@ -74,14 +74,14 @@ echo:
 printArray: # loop for printing all array elements
 	lb $t2, 0($s0) # loads the current array element
 	printInt($t2) # prints the current array element
-	addi $s0, $s0, 4 # increments the base address for the next element
+	addi $s0, $s0, 1 # increments the base address for the next element
 	addi $t1, $t1, 1 # increments the loop counter
 	beq $t1, $t3, resetArrayAddress2 # resets the address again
 	printString(comma) # prints ", " but not on the last element
 	j printArray # restarts the loop
 
 resetArrayAddress2: # not really made use of right now, but possibly useful for future code when you need to start at the first element
-	addi $s0, $s0, -4
+	addi $s0, $s0, -1
 	addi $t1, $t1, -1
 	beq $t1, 1, EXIT
 	j resetArrayAddress2
@@ -133,6 +133,3 @@ invalid: # error when the user enters 0 or a negative number
 EXIT:
 	li $v0, 10
 	syscall
-	
-	
-	
