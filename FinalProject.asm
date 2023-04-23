@@ -1,3 +1,8 @@
+# CS 2640.02
+# Names: Anthony Fonseca, Ali Momennasab, Charles Trouilliere, Patrick Hoang
+# Date: 4/22/23
+# Objectives: 
+
 # s0 - array
 # s1 - sorted array
 # s2 - number of elements
