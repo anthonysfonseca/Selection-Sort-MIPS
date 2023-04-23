@@ -48,7 +48,7 @@ main:
 #	sw $t0, numOfElements # Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label. 
 	move $s2, $t0 # stores the number of elements in $s2
 	addi $t1, $zero, 1 # loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
-	la $s0, array # loads the address of the array at $s0 (Not sure if this is needed, havent' tested without)
+	la $s0, array # loads the address of the array at $s0 (Not sure if this is needed, haven't tested without)
 	addi $t3, $s2, 1 # number of elements plus 1 so the loop accounts for starting at 1 instead of 0
 	
 getArray:
