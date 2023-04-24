@@ -33,7 +33,7 @@
 .data
 #numOfElements: .space 4 # Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label.
 numOfElementsPrompt: .asciiz "How many integers will you be entering? "
-array: .space 1000
+array: .word 0:100
 intPrompt: .asciiz "Enter integer "
 intPromptCont: .asciiz ": "
 printArray1: .asciiz "You entered: "
@@ -56,14 +56,14 @@ getArray:
 	printInt($t1) # prints the counter
 	printString(intPromptCont) # prints ": "
 	getInt # gets the current array element
-	sb $t0, 0($s0) # stores the input in the array
-	addi $s0, $s0, 1 # increments the base address for the next element
+	sw $t0, 0($s0) # stores the input in the array
+	addi $s0, $s0, 4 # increments the base address for the next element
 	addi $t1, $t1, 1 # increments the loop counter
 	beq $t1, $t3, resetArrayAddress1 # moves to the next step in the code
 	j getArray # restarts the loop
 
 resetArrayAddress1: # resets the array address back to the first element
-	addi $s0, $s0, -1 # decrements the base address to the previous element
+	addi $s0, $s0, -4 # decrements the base address to the previous element
 	addi $t1, $t1, -1 # decrements the loop counter
 	beq $t1, 1, echo # moves to the next step
 	j resetArrayAddress1 # restarts the loop until the array address is back down to the first element
@@ -72,24 +72,24 @@ echo:
 	printString(printArray1) # prints "You entered: " 
 
 printArray: # loop for printing all array elements
-	lb $t2, 0($s0) # loads the current array element
+	lw $t2, 0($s0) # loads the current array element
 	printInt($t2) # prints the current array element
-	addi $s0, $s0, 1 # increments the base address for the next element
+	addi $s0, $s0, 4 # increments the base address for the next element
 	addi $t1, $t1, 1 # increments the loop counter
 	beq $t1, $t3, resetArrayAddress2 # resets the address again
 	printString(comma) # prints ", " but not on the last element
 	j printArray # restarts the loop
 
 resetArrayAddress2: # not really made use of right now, but possibly useful for future code when you need to start at the first element
-	addi $s0, $s0, -1
+	addi $s0, $s0, -4
 	addi $t1, $t1, -1
 	beq $t1, 1, EXIT
 	j resetArrayAddress2
 
 #sortArray:
-#	lb $t2, 0($s0)
+#	lw $t2, 0($s0)
 #	addi $s0, $s0, 4
-#	lb $t4, 0($s0)
+#	lw $t4, 0($s0)
 #	blt $t2, $t4, switchNum1
 #	bge $t2, $t4, sortArray
 
@@ -98,7 +98,7 @@ resetArrayAddress2: # not really made use of right now, but possibly useful for 
 #	beq $t1, $t3, resetArrayAddress4sortArray
 	
 #switchNum1:
-#	sb $t2, 0($s0)
+#	sw $t2, 0($s0)
 #	move $t2, $t4
 #	j resetArrayAddress3
 
@@ -122,7 +122,7 @@ invalid: # error when the user enters 0 or a negative number
 #	j resetArrayAddress4
 
 #printSortedArray:
-#	lb $t2, 0($s0)
+#	lw $t2, 0($s0)
 #	printInt($t2)
 #	addi $s0, $s0, 4
 #	addi $t1, $t1, 1
