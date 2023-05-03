@@ -16,7 +16,7 @@
 
 # Selection sort pseudocode
 # ----------------------------------------
-# for (i=1 to n-1):
+# for (i=0 to n-1):
 #	min = i;
 #	for (j=i+1 to n):
 #		if (arr[j] < arr[min]):
@@ -125,7 +125,7 @@ invalid:				# Error when the user enters 0 or a negative number
 # Selection sort
 selectionSort:
 	resetArray				# Reset $s0 to the base address of the array
-	li $t1, 1				# Set i=1
+	li $t1, 0				# Set i=0
 	
 	outerLoop:			
 		blt $t1, $s2, insideOuterLoop	# for (i=1 to n-1):
@@ -147,7 +147,7 @@ selectionSort:
 		lw $t4, 0($t4)			# arr[j]
 		bge $t2, $t4, innerElse		# !(arr[j] < arr[min])
 		move $t5, $t3			# min = j
-		
+
 	innerElse:
 		add $t3, $t3, 1			# end of inner loop, increment (j) counter and loop as necessary
 		ble $t3, $s2, innerLoop		# for (j=i+1 to n)
