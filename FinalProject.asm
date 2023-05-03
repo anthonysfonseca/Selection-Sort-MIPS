@@ -4,15 +4,28 @@
 # Objectives: 
 
 # s0 - array
-# s1 - sorted array
-# s2 - number of elements
-# s3 - number of elements - 1
+# s1 - NOT USED AT ALL
+# s2 - number of elements (n)
+# s3 - number of elements - 1 (n-1)
 # t0 - temp storage for read int
 # t1 - loop counter
 # t2 - current element
 # t3 - compared element
-# t4 - counter for sorted array
+# t4 - NOT USED AT ALL
 # t5 - counter for how far the compared element is from the current element
+
+# Selection sort pseudocode
+# ----------------------------------------
+# for (i=1 to n-1):
+#	min = i;
+#	for (j=i+1 to n):
+#		if (arr[j] < arr[min]):
+#			min = j;
+#		end if
+#	end for
+#	swap A[i], A[min]
+# end for
+# ---------------------------------------
 
 .macro printString (%string)	# Prints a string w/ a label
 	li $v0, 4
@@ -46,12 +59,28 @@
 	move $t1, $zero
 .end_macro
 
+.macro printArray ($arr, $length)
+	li $t1, 1			# Starts counter at 1 for formatting purposes
+	loop:
+		lw $t2, 0($arr)
+		printInt($t2)
+		blt $t1, $length, comma	# If counter < arrLength: print a comma to prepare for next int (e.g., '1, 2, 3')
+		j exitLoop		# Else: print last element w/o a comma & exit macro
+	comma:
+		print(", ")
+		addi $t1, $t1, 1	# Increment counter
+		addi $s0, $s0, 4	# Move to next element in array
+		j loop
+	exitLoop:
+.end_macro
+
 .data
 #numOfElements: .space 4 			# Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label.
 numOfElementsPrompt: .asciiz "How many integers will you be entering? "
 intPrompt: .asciiz "Enter integer "
 array: .word 0:100
 sortedArray: .word 0
+
 printArray1: .asciiz "You entered: "
 comma: .asciiz ", "
 error: .asciiz "Incorrect Input. Try again.\n"
@@ -67,7 +96,6 @@ main:
 	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
 	la $s0, array 				# loads the address of the array at $s0
 	addi $s2, $s2, 1 			# number of elements plus 1 so the loop accounts for starting at 1 instead of 0
-	la $s1, sortedArray
 	
 getArray:				# Populate the array with user-defined integers
 	printString(intPrompt) 			# prompts the user to enter the current element of the array
@@ -89,52 +117,48 @@ echo:
 	printString(printArray1) 		# prints "You entered: " 
 
 printArray: 				# Traverse the array and print its contents
-	lw $t2, 0($s0) 				# loads the current array element
-	printInt($t2) 				# prints the current array element
-	addi $s0, $s0, 4 			# increments the base address for the next element
-	addi $t1, $t1, 1 			# increments the loop counter
-	beq $t1, $s2, resetArrayAddress2	# resets the address again
-	printString(comma) 			# prints ", " but not on the last element
-	j printArray 				# restarts the loop
+	printArray($s0, $s2)
 
 resetArrayAddress2:
-	resetArray 				# resets $s0 to the base address of the array
-	la $s1, sortedArray
-	add $s1, $s1, $t4
+	resetArray 			# resets $s0 to the base address of the array
 
 load:
 	lw $t2, 0($s0)
-
-sort:
-	lw $t2, 0($s0)				# loads the current element into $t2
-	add $s0, $s0, 4 			# shifts the base address to the next element
-	add $t1, $t1, 1				# increments the loop counter to the current place in the array
-	add $t5, $t5, 4
-	bge $t1, $s3, endArray
-	lw $t3, 0($s0)
-	blt $t3, $t2, switch
-	j sort
-
-switch:
-	sw $t3, 0($s1)
-	move $t5, $zero
-	j sort
 	
-endArray:
-	lw $t2, 0($s0)
-	sub $s0, $s0, $t5
-	sw $t2, 0($s0)
-	add $t4, $t4, 4
-	sub $s3, $s3, 1
-	bltz $s3, printSort
-	j resetArrayAddress2
+# Selection sort
+selectionSort:
+	
+
+#sort:
+	#lw $t2, 0($s0)				# loads the current element into $t2
+	#add $s0, $s0, 4 			# shifts the base address to the next element
+	#add $t1, $t1, 1				# increments the loop counter to the current place in the array
+	#add $t5, $t5, 4
+	#bge $t1, $s3, endArray
+	#lw $t3, 0($s0)
+	#blt $t3, $t2, swap
+	#j sort
+
+#swap:
+	#sw $t3, 0($s1)
+	#move $t5, $zero
+	#j sort
+	
+#endArray:
+#	lw $t2, 0($s0)
+	#sub $s0, $s0, $t5
+#	sw $t2, 0($s0)
+#	add $t4, $t4, 4
+#	sub $s3, $s3, 1
+#	bltz $s3, printSort
+#	j resetArrayAddress2
 
 invalid:					# error when the user enters 0 or a negative number
 	printString(error)
 	j main
-
+	
 printSort:
-	la $s1, sortedArray
+	la $s1, array
 	move $t0, $zero
 	print("\n")
 	print("Sorted array is: ")		# prints specified string
