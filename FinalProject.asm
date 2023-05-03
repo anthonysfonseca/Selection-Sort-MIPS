@@ -8,11 +8,11 @@
 # s2 - number of elements (n)
 # s3 - number of elements - 1 (n-1)
 # t0 - temp storage for read int
-# t1 - loop counter
+# t1 - loop counter 
 # t2 - current element
-# t3 - compared element
-# t4 - NOT USED AT ALL
-# t5 - counter for how far the compared element is from the current element
+# t3 - inner loop counter ('j' in pseudocode)
+# t4 - element at index j
+# t5 - "minimum" element tracker ('min' in pseudocode)
 
 # Selection sort pseudocode
 # ----------------------------------------
@@ -90,7 +90,7 @@ temp: .asciiz " Code Went wrong here\n"
 main:					
 	printString(numOfElementsPrompt) 	# prompts the user to enter the number of elements they want in the array
 	getInt 					# gets the number of array elements from the user
-	ble $t0, 1, invalid 			# prints an error if the user inputs 0 or a negative number
+	blez $t0, invalid 			# prints an error if the user inputs 0 or a negative number
 #	sw $t0, numOfElements 			# Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label. 
 	move $s2, $t0 				# stores the number of elements in $s2
 	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
@@ -113,64 +113,65 @@ resetArrayAddress1: 			# Resets the array address back to the first element
 	sub $s2, $s2, 1 			# sets s2 back to the number of elements
 	add $s3, $s2, $zero 			# number of elements - 1
 
-echo:
-	printString(printArray1) 		# prints "You entered: " 
-
-printArray: 				# Traverse the array and print its contents
-	printArray($s0, $s2)
-
-resetArrayAddress2:
-	resetArray 			# resets $s0 to the base address of the array
-
-load:
-	lw $t2, 0($s0)
+echoArray:
+	printString(printArray1) 		# prints "You entered: "
+	printArray ($s0, $s2)			# traverse through array and print its current contents
+	j selectionSort
 	
-# Selection sort
-selectionSort:
-	
-
-#sort:
-	#lw $t2, 0($s0)				# loads the current element into $t2
-	#add $s0, $s0, 4 			# shifts the base address to the next element
-	#add $t1, $t1, 1				# increments the loop counter to the current place in the array
-	#add $t5, $t5, 4
-	#bge $t1, $s3, endArray
-	#lw $t3, 0($s0)
-	#blt $t3, $t2, swap
-	#j sort
-
-#swap:
-	#sw $t3, 0($s1)
-	#move $t5, $zero
-	#j sort
-	
-#endArray:
-#	lw $t2, 0($s0)
-	#sub $s0, $s0, $t5
-#	sw $t2, 0($s0)
-#	add $t4, $t4, 4
-#	sub $s3, $s3, 1
-#	bltz $s3, printSort
-#	j resetArrayAddress2
-
-invalid:					# error when the user enters 0 or a negative number
+invalid:				# Error when the user enters 0 or a negative number
 	printString(error)
 	j main
 	
-printSort:
-	la $s1, array
-	move $t0, $zero
-	print("\n")
-	print("Sorted array is: ")		# prints specified string
-
-printSortedArray: 				# loop for printing all array elements
-	lw $t2, 0($s1) 				# loads the current array element
-	printInt($t2) 				# prints the current array element
-	addi $s1, $s1, 4 			# increments the base address for the next element
-	addi $t1, $t1, 1 			# increments the loop counter
-	beq $t1, $s2, exit 			# resets the address again
-	printString(comma) 			# prints ", " but not on the last element
-	j printSortedArray 			# restarts the loop
+# Selection sort
+selectionSort:
+	print("\nTest")
+	resetArray				# Reset $s0 to the base address of the array
+	li $t1, 1				# Set i=1
+	
+	outerLoop:				
+		blt $t1, $s2, insideOuterLoop	# for (i=1 to n-1):
+		j endSort			# i > n-1, algorithm finished
+	
+	insideOuterLoop:
+		move $t5, $t1			# min = i
+		move $t3, $t1			
+		addi $t3, $t3, 1		# j=i+1
+		j innerLoop
+				
+	innerLoop:
+		sll $t2, $t5, 2	
+		add $t2, $t2, $s0		
+		sll $t4, $t3, 2
+		add $t4, $t4, $s0
+		
+		lw $t2, 0($t2)			# arr[min]
+		lw $t4, 0($t4)			# arr[j]
+		bge $t2, $t4, innerElse		# !(arr[j] < arr[min])
+		move $t5, $t3			# min = j
+		
+	innerElse:
+		add $t3, $t3, 1			# end of inner loop, increment (j) counter and loop as necessary
+		ble $t5, $s2, innerLoop		# for (j=i+1 to n)
+		j swap
+	
+	swap:
+		sll $t2, $t1, 2			# arr[i]
+		add $t2, $t2, $s0
+		sll $t4, $t5, 2			# arr[min]
+		add $t4, $t4, $s0
+		
+		lw $t0, 0($t2)			# temp = arr[i]
+		lw $t6, 0($t4)			# $t6 = arr[min]
+		sw $t6, 0($t2)			# Swap values directly in array
+		sw $t0, 0($t4)
+		
+		add $t1, $t1, 1
+		j outerLoop
+		
+endSort:
+	resetArray
+	print("\nSorted array is: ")
+	printArray($s0, $s2)
 
 exit:
 	li $v0, 10
