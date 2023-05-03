@@ -124,11 +124,10 @@ invalid:				# Error when the user enters 0 or a negative number
 	
 # Selection sort
 selectionSort:
-	print("\nTest")
 	resetArray				# Reset $s0 to the base address of the array
 	li $t1, 1				# Set i=1
 	
-	outerLoop:				
+	outerLoop:			
 		blt $t1, $s2, insideOuterLoop	# for (i=1 to n-1):
 		j endSort			# i > n-1, algorithm finished
 	
@@ -151,7 +150,7 @@ selectionSort:
 		
 	innerElse:
 		add $t3, $t3, 1			# end of inner loop, increment (j) counter and loop as necessary
-		ble $t5, $s2, innerLoop		# for (j=i+1 to n)
+		ble $t3, $s2, innerLoop		# for (j=i+1 to n)
 		j swap
 	
 	swap:
@@ -168,7 +167,7 @@ selectionSort:
 		add $t1, $t1, 1
 		j outerLoop
 		
-endSort:
+endSort:	
 	resetArray
 	print("\nSorted array is: ")
 	printArray($s0, $s2)
