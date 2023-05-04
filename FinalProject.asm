@@ -69,7 +69,7 @@
 	comma:
 		print(", ")
 		addi $t1, $t1, 1	# Increment counter
-		addi $s0, $s0, 4	# Move to next element in array
+		addi $arr, $arr, 4	# Move to next element in array
 		j loop
 	exitLoop:
 .end_macro
@@ -78,7 +78,7 @@
 #numOfElements: .space 4 			# Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label.
 numOfElementsPrompt: .asciiz "How many integers will you be entering? "
 intPrompt: .asciiz "Enter integer "
-array: .word 0:100
+array: .space 400
 sortedArray: .word 0
 
 printArray1: .asciiz "You entered: "
@@ -125,10 +125,11 @@ invalid:				# Error when the user enters 0 or a negative number
 # Selection sort
 selectionSort:
 	resetArray				# Reset $s0 to the base address of the array
+	add $s3, $s2, -1			# $s3 = n-1
 	li $t1, 0				# Set i=0
-	
-	outerLoop:			
-		blt $t1, $s2, insideOuterLoop	# for (i=1 to n-1):
+
+	outerLoop:
+		blt $t1, $s3, insideOuterLoop	# for (i=0 to n-1):
 		j endSort			# i > n-1, algorithm finished
 	
 	insideOuterLoop:
@@ -145,13 +146,15 @@ selectionSort:
 		
 		lw $t2, 0($t2)			# arr[min]
 		lw $t4, 0($t4)			# arr[j]
-		bge $t2, $t4, innerElse		# !(arr[j] < arr[min])
-		move $t5, $t3			# min = j
+		blt $t4, $t2, innerIf		# arr[j] < arr[min]
+		j endInner
 
-	innerElse:
+	innerIf:
+		move $t5, $t3
+	
+	endInner:
 		add $t3, $t3, 1			# end of inner loop, increment (j) counter and loop as necessary
-		ble $t3, $s2, innerLoop		# for (j=i+1 to n)
-		j swap
+		blt $t3, $s2, innerLoop 	# for (j=i+1 to n)
 	
 	swap:
 		sll $t2, $t1, 2			# arr[i]
