@@ -4,9 +4,8 @@
 # Objectives: 
 
 # s0 - array
-# s1 - NOT USED AT ALL
-# s2 - number of elements (n)
-# s3 - number of elements - 1 (n-1)
+# s1 - number of elements (n)
+# s2 - number of elements - 1 (n-1)
 # t0 - temp storage for read int
 # t1 - loop counter 
 # t2 - current element
@@ -90,10 +89,10 @@ main:
 	printString(numOfElementsPrompt) 	# prompts the user to enter the number of elements they want in the array
 	getInt 					# gets the number of array elements from the user
 	blez $t0, invalid 			# prints an error if the user inputs 0 or a negative number
-	move $s2, $t0 				# stores the number of elements in $s2
+	move $s1, $t0 				# stores the number of elements in $s1
 	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
 	la $s0, array 				# loads the address of the array at $s0
-	addi $s2, $s2, 1 			# number of elements plus 1 so the loop accounts for starting at 1 instead of 0
+	addi $s1, $s1, 1 			# number of elements plus 1 so the loop accounts for starting at 1 instead of 0
 	
 getArray:				# Populate the array with user-defined integers
 	printString(intPrompt) 			# prompts the user to enter the current element of the array
@@ -103,17 +102,17 @@ getArray:				# Populate the array with user-defined integers
 	sw $t0, 0($s0) 				# stores the input in the array
 	addi $s0, $s0, 4 			# increments the base address for the next element
 	addi $t1, $t1, 1 			# increments the loop counter
-	beq $t1, $s2, resetArrayAddress1	# moves to the next step in the code
+	beq $t1, $s1, resetArrayAddress1	# moves to the next step in the code
 	j getArray 				# restarts the loop
 
 resetArrayAddress1: 			# Resets the array address back to the first element
 	resetArray
-	sub $s2, $s2, 1 			# sets s2 back to the number of elements
-	add $s3, $s2, $zero 			# number of elements - 1
+	sub $s1, $s1, 1 			# sets s2 back to the number of elements
+	add $s2, $s1, $zero 			# number of elements - 1
 
 echoArray:
 	printString(printArray1) 		# prints "You entered: "
-	printArray ($s0, $s2)			# traverse through array and print its current contents
+	printArray ($s0, $s1)			# traverse through array and print its current contents
 	j selectionSort
 	
 invalid:				# Error when the user enters 0 or a negative number
@@ -123,11 +122,11 @@ invalid:				# Error when the user enters 0 or a negative number
 # Selection sort
 selectionSort:
 	resetArray				# Reset $s0 to the base address of the array
-	add $s3, $s2, -1			# $s3 = n-1
+	add $s2, $s1, -1			# $s2 = n-1
 	li $t1, 0				# Set i=0
 
 	outerLoop:
-		blt $t1, $s3, insideOuterLoop	# for (i=0 to n-1):
+		blt $t1, $s2, insideOuterLoop	# for (i=0 to n-1):
 		j endSort			# i > n-1, algorithm finished
 	
 	insideOuterLoop:
@@ -152,7 +151,7 @@ selectionSort:
 	
 	endInner:
 		add $t3, $t3, 1			# end of inner loop, increment (j) counter and loop as necessary
-		blt $t3, $s2, innerLoop 	# for (j=i+1 to n)
+		blt $t3, $s1, innerLoop 	# for (j=i+1 to n)
 	
 	swap:
 		sll $t2, $t1, 2			# arr[i]
@@ -171,7 +170,7 @@ selectionSort:
 endSort:	
 	resetArray
 	print("\nSorted array is: ")
-	printArray($s0, $s2)
+	printArray($s0, $s1)
 
 exit:
 	li $v0, 10
