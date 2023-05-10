@@ -1,7 +1,7 @@
 # CS 2640.02
 # Names: Anthony Fonseca, Ali Momennasab, Charles Trouilliere, Patrick Hoang
 # Date: 5/2/23
-# Objectives: 
+# Objectives: Implement the selection sort algorithm
 
 # s0 - array
 # s1 - number of elements (n)
