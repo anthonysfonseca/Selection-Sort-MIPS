@@ -75,7 +75,6 @@
 .end_macro
 
 .data
-#numOfElements: .space 4 			# Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label.
 numOfElementsPrompt: .asciiz "How many integers will you be entering? "
 intPrompt: .asciiz "Enter integer "
 array: .space 400
@@ -91,7 +90,6 @@ main:
 	printString(numOfElementsPrompt) 	# prompts the user to enter the number of elements they want in the array
 	getInt 					# gets the number of array elements from the user
 	blez $t0, invalid 			# prints an error if the user inputs 0 or a negative number
-#	sw $t0, numOfElements 			# Don't need this code as of now but leaving it just in case it's helpful in the future. It stores the number of array elements as a label. 
 	move $s2, $t0 				# stores the number of elements in $s2
 	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
 	la $s0, array 				# loads the address of the array at $s0
