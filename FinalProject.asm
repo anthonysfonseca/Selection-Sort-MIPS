@@ -90,7 +90,8 @@ main:
 	getInt 					# gets the number of array elements from the user
 	blez $t0, invalid 			# prints an error if the user inputs 0 or a negative number
 	move $s1, $t0 				# stores the number of elements in $s1
-	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
+	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element 
+						# (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
 	la $s0, array 				# loads the address of the array at $s0
 	addi $s1, $s1, 1 			# number of elements plus 1 so the loop accounts for starting at 1 instead of 0
 	
