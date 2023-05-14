@@ -74,21 +74,20 @@
 .end_macro
 
 .data
-numOfElementsPrompt: .asciiz "How many integers will you be entering? "
+numOfElementsPrompt: .asciiz "How many integers will you be entering (max 1000)?: "
 intPrompt: .asciiz "Enter integer "
-array: .space 400
-sortedArray: .word 0
+array: .space 4000			# Allocates space for up to 1000 integers for the array
 
-printArray1: .asciiz "You entered: "
+printArray1: .asciiz "\nYou entered: "
 comma: .asciiz ", "
 error: .asciiz "Incorrect Input. Try again.\n"
-temp: .asciiz " Code Went wrong here\n"
 
 .text
 main:					
 	printString(numOfElementsPrompt) 	# prompts the user to enter the number of elements they want in the array
 	getInt 					# gets the number of array elements from the user
-	blez $t0, invalid 			# prints an error if the user inputs 0 or a negative number
+	blez $t0, invalid 			# prints an error if the input is <= 0
+	bgt $t0, 1000, invalid			# prints an error if the input is > 1000
 	move $s1, $t0 				# stores the number of elements in $s1
 	addi $t1, $zero, 1 			# loop counter starting at 1 so it can print the current element 
 						# (e.g. starting at "Enter integer 1: " instead of "Enter integer 0: "
